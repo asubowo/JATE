@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".MarkdownViewActivity" />
-        <activity android:name=".EditorActivity"></activity>
+        <activity android:name=".EditorActivity" />
     </application>
 
 </manifest>

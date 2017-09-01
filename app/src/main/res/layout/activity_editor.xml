@@ -9,12 +9,18 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="@dimen/activity_horizontal_margin">
+        >
 
-        <com.andrewsubowo.justanothertexteditor.EditorActivity.Editor
-            android:layout_height="wrap_content"
+        <com.andrewsubowo.justanothertexteditor.Editor
+            android:id="@+id/editor"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
             android:layout_width="wrap_content"
-            android:text="testing one two three hello world al;sdkfjal;s"/>
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:cursorVisible="true"
+
+            >
+        </com.andrewsubowo.justanothertexteditor.Editor>
 
     </ScrollView>
 
