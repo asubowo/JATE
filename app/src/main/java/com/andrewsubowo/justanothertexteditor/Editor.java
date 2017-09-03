@@ -8,6 +8,8 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 
+import com.andrewsubowo.justanothertexteditor.io.SaveFile;
+
 
 /**
  * Created by asubowo on 9/1/2017.
@@ -32,6 +34,7 @@ public class Editor extends android.support.v7.widget.AppCompatEditText {
         paint.setTypeface(Typeface.MONOSPACE);
         paint.setTextSize(20);
 
+
     }
 
     public Editor(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -43,7 +46,7 @@ public class Editor extends android.support.v7.widget.AppCompatEditText {
         int startingPoint = getBaseline(); // Starting point for the canvas to start drawing each line
         int lineCount = getLineCount();
 
-        for (int i = 0; i< lineCount; i++) {
+        for (int i = 0; i < lineCount; i++) {
             int trueline = i + 1;
             canvas.drawText(String.valueOf("" + trueline), rect.left, startingPoint, paint);
             startingPoint += getLineHeight(); // Add the height of the previous line to start drawing numbers on the next line
@@ -58,5 +61,15 @@ public class Editor extends android.support.v7.widget.AppCompatEditText {
     public void initEditor() {
         setTypeface(Typeface.MONOSPACE);
         setFocusable(true);
+        this.requestFocus();
+
+    }
+
+    public String getTextEditable() {
+        return getText().toString();
+    }
+
+    public boolean isEmpty() {
+        return this.getText().toString().equals("");
     }
 }

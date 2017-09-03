@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">JATE (Just Another Text Editor)</string>
     <string name="title_activity_main">JATE (Just Another Text Editor)</string>
-    <string name="title_editor_activity">New File</string>
+    <string name="title_editor_activity_default">New File</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
