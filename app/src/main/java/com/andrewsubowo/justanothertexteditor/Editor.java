@@ -65,7 +65,7 @@ public class Editor extends android.support.v7.widget.AppCompatEditText {
 
     }
 
-    public String getTextEditable() {
+    public String getWrittenText() {
         return getText().toString();
     }
 
