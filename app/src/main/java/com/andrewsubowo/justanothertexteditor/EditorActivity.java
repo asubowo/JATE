@@ -3,6 +3,7 @@ package com.andrewsubowo.justanothertexteditor;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,22 +17,24 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.andrewsubowo.justanothertexteditor.io.SaveFile;
 
+import java.io.File;
+
 
 public class EditorActivity extends AppCompatActivity {
 
+    ScrollView scrollView;
     Editor editor;
-    MainActivity mainActivity;
     Boolean isEdited;
     Toolbar toolbar;
     SaveFile saveFile;
-    String filename, extension, textfilename;
+    String filename;
     EditorActivity editorActivity;
-
-    private int saveConfirmation = 0;
+    File path, directory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,9 @@ public class EditorActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         editorActivity = this;
+
+        path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+        directory = new File(path, "JATE");
 
         this.setTitle(R.string.title_editor_activity_default);
         editor = (Editor) findViewById(R.id.editor);
@@ -69,7 +75,7 @@ public class EditorActivity extends AppCompatActivity {
 
             // Detect if the editor is not empty and if any changes were made
             if (!editor.isEmpty() && !isEdited) {
-                
+
             } else {
 
             }
@@ -106,19 +112,31 @@ public class EditorActivity extends AppCompatActivity {
                     EditText filenameEditText = dialogView.findViewById(R.id.filename);
                     filename = filenameEditText.getText().toString();
 
+                    File file = new File(directory, filename);
+                    if (file.exists()) {
 
-                    // If there isn't any filename
-                    if (!filename.contains(".")) {
-                        extension = ".txt";
-                        textfilename = filename;
-                    } else {
-                        int extensionStart = filename.lastIndexOf(".");
-                        extension = filename.substring(extensionStart);
-                        textfilename = filename.substring(0, extensionStart);
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(editorActivity);
+                        dialogBuilder.setTitle("Overwrite file?")
+                                .setMessage("Are you sure you want to overwrite " + filename + "?")
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        saveFile = new SaveFile(editorActivity, editor, filename);
+                                        saveFile.execute();
+                                    }
+                                })
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        ScrollView view = (ScrollView) editorActivity.findViewById(R.id.scrollView);
+                                        Snackbar.make(view, "Save cancelled", Snackbar.LENGTH_LONG)
+                                                .show();
+                                    }
+                                });
+
+                        AlertDialog dialog = dialogBuilder.create();
+                        dialog.show();
                     }
-
-                    saveFile = new SaveFile(editorActivity, editor, textfilename, extension);
-                    saveFile.execute();
                 }
             });
 
@@ -131,8 +149,11 @@ public class EditorActivity extends AppCompatActivity {
 
             AlertDialog saveConfirmation = saveDialog.create();
             saveConfirmation.show();
-
         }
         return true;
+    }
+
+    public void setNewTitle(String title) {
+        this.setTitle(title);
     }
 }
