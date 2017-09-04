@@ -15,3 +15,18 @@ Q: Do you have any future plans for JATE?
 
 A: Maybe a Pro version with more features (Google Firebase integration, cloud integration...). For now, I want to keep close to the K.I.S.S. method.
 
+# What's completed so far
+
+- Custom editor activity with line numbering.
+
+- Saving with confirmation if you want to overwrite files (also placed into an asynctask in case someone wants to load up a large file).
+
+# To do (current roadmap)
+
+- Implement file loading.
+
+- Changelog dialog?
+
+- Custom view to show recently opened files.
+
+- Figure out what to do with the nav drawer. Not sure if I even want to keep that (but it's nice having the option anyway in the codebase so far).
