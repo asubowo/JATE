@@ -53,8 +53,6 @@ public class SaveFile extends AsyncTask<Void, Void, Boolean> {
         Snackbar.make(view, "Saving file...", Snackbar.LENGTH_LONG)
                 .show();
 
-
-
     }
 
     @Override
