@@ -1,7 +1,5 @@
 package com.andrewsubowo.justanothertexteditor;
 
-import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Environment;
 import android.support.design.widget.Snackbar;
@@ -19,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ScrollView;
-import android.widget.Toast;
 
 import com.andrewsubowo.justanothertexteditor.io.SaveFile;
 
@@ -30,7 +27,7 @@ public class EditorActivity extends AppCompatActivity {
 
     ScrollView scrollView;
     Editor editor;
-    Boolean isEdited;
+    Boolean isEdited, savedRecently;
     Toolbar toolbar;
     SaveFile saveFile;
     String filename;
@@ -45,6 +42,8 @@ public class EditorActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         editorActivity = this;
+        isEdited = false;
+        savedRecently = true;
 
         path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
         directory = new File(path, "JATE");
@@ -61,13 +60,14 @@ public class EditorActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                Log.d("DEBUG", "TEXT IS BEING EDITED");
                 isEdited = true;
+                savedRecently = false;
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
                 isEdited = true;
+                savedRecently = false;
             }
         });
     }
@@ -78,22 +78,19 @@ public class EditorActivity extends AppCompatActivity {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
 
             // Detect if any changes were made
-            if (isEdited) {
+            if (isEdited && !savedRecently) {
                 Log.d("DEBUG", "Displaying confirmation dialog to user.");
                 AlertDialog.Builder confirmQuitDialogBuilder = new AlertDialog.Builder(this);
                 confirmQuitDialogBuilder.setTitle("Quit without saving?")
                         .setMessage("Changes were made to the file. Data will be lost if you do not save.")
-                        .setPositiveButton("Save and quit", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 // Confirm the user the save action
                                 saveAction();
-
-
-                                //finish(); //FINISH THIS HERE - EDITORACTIVITY RESOURCE IS REMOVED SO SNACKBAR DOESN'T HAVE ANYTHING TO REFERENCE
                             }
                         })
-                        .setNegativeButton("Quit anyway", new DialogInterface.OnClickListener() {
+                        .setNegativeButton("Quit", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 // quit the activity without saving any text as user confirmed
@@ -133,7 +130,9 @@ public class EditorActivity extends AppCompatActivity {
         return true;
     }
 
+
     public void saveAction() {
+
         AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
 
@@ -160,6 +159,7 @@ public class EditorActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     saveFile = new SaveFile(editorActivity, editor, filename);
                                     saveFile.execute();
+
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -174,10 +174,11 @@ public class EditorActivity extends AppCompatActivity {
                     AlertDialog dialog = dialogBuilder.create();
                     dialog.show();
                 }
-
-                saveFile = new SaveFile(editorActivity, editor, filename);
-                saveFile.execute();
-
+                else {
+                    // If the file doesn't already exist, we can just go ahead and save it
+                    saveFile = new SaveFile(editorActivity, editor, filename);
+                    saveFile.execute();
+                }
             }
         });
 
@@ -190,11 +191,25 @@ public class EditorActivity extends AppCompatActivity {
 
         AlertDialog saveConfirmation = saveDialog.create();
         saveConfirmation.show();
-
-
     }
 
+    /**
+     * If the AsyncTask sucessfully saved the file, tell this activity accordingly.
+     * @param status - The status returned by the asynctask
+     */
+    public void setSaveStatus(boolean status) {
+        savedRecently = status;
+    }
+
+    /**
+     * Set the title of this activity to the file name the user gave
+     * @param title - The title to name the activity.
+     */
     public void setNewTitle(String title) {
-        this.setTitle(title);
+        toolbar.setTitle(title);
+    }
+
+    public void setSubtitle(String subtitle) {
+        toolbar.setSubtitle(subtitle);
     }
 }
